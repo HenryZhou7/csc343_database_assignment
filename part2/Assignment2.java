@@ -38,10 +38,9 @@ public class Assignment2 {
    public boolean connectDB(String URL, String username, String password) {
       // Implement this method!
 
-      Connection conn = null;
       
       try {
-          conn = DriverManager.getConnection(URL, username, password);
+          connection = DriverManager.getConnection(URL, username, password);
       }
       catch (SQLException e){   //once the connection fails
           return false;
@@ -55,9 +54,20 @@ public class Assignment2 {
    *
    * @return true if the closing was successful, false otherwise
    */
+   /*
+   * One reference I found on stackoverflow
+   * http://stackoverflow.com/questions/2225221/closing-database-connections-in-java
+   */
    public boolean disconnectDB() {
-      // Implement this method!
-      return false;
+      
+      try{
+          connection.close();
+      }
+      catch (SQLException e){
+          return false;
+      }
+
+      return true;
    }
 
    /**
