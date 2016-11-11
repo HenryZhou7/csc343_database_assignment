@@ -37,7 +37,17 @@ public class Assignment2 {
    */
    public boolean connectDB(String URL, String username, String password) {
       // Implement this method!
-      return false;
+
+      Connection conn = null;
+      
+      try {
+          conn = DriverManager.getConnection(URL, username, password);
+      }
+      catch (SQLException e){   //once the connection fails
+          return false;
+      }
+
+      return true;
    }
 
   /**
