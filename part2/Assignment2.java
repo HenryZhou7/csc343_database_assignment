@@ -101,13 +101,56 @@ public class Assignment2 {
     */
    public boolean booking(int requestId, Date start, int numNights, int price) {
       
+      String queryString;
+      ResultSet rs;
+      PreparedStatement ps;
+
       //check if the booking request has been made
+      queryString = "SELECT * FROM BookingRequest WHERE requestId = ?";
+      ps = connection.prepareStatement(queryString);
+
+      ps.setInt(1, requestId);
+      rs = ps.executeQuery();
+
+      if (rs.next() == false){ //the booking requestid is not found
+          return false;
+      }
+
+      //find the listingId given the requestId
+      int listingId = rs.getInt("listingId");
+      if (rs.next() == true){ //there exists more than one requestId
+          System.out.println("More than one listingIds");
+          return false;
+      }
 
       //check if the same booking has been added to the Booking table
+      queryString = "SELECT * FROM BookingRequest WHERE listingId = ? AND startdate = ? AND numNights = ? AND price = ?";
+      ps = connection.prepareStatement(queryString);
+
+      ps.setInt(1, listingId);
+      ps.setDate(2, start);
+      ps.setInt(3, numNights);
+      ps.setInt(4, price);
+      rs = ps.executeQuery();
+
+      if (rs.next() == true){ //there is already something in the booking table
+          return false;
+      }
 
       //if it hasn't been added then insert the entry to the Booking table
+      
+      queryString = "INSERT INTO Booking " +
+                    " VALUES (?, ?, ?, ?, ?, ?)";
+      ps = connection.prepareStatement(queryString);
 
-      return false; 
+      ps.setInt(1, listingId);
+      ps.setDate(2, start);
+      ps.setInt(3, null); //can travelerID be null?
+      ps.setInt(4, numNights);
+      ps.setInt(5, null);
+      ps.setInt(6, price);
+
+      return true; 
    }
 
    public static void main(String[] args) {
