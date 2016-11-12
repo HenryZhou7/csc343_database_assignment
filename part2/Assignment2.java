@@ -100,7 +100,13 @@ public class Assignment2 {
     * @return            true if the operation was successful, false otherwise
     */
    public boolean booking(int requestId, Date start, int numNights, int price) {
-      // Implement this method!
+      
+      //check if the booking request has been made
+
+      //check if the same booking has been added to the Booking table
+
+      //if it hasn't been added then insert the entry to the Booking table
+
       return false; 
    }
 
