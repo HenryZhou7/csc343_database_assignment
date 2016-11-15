@@ -27,6 +27,7 @@ CREATE VIEW ho_5_rate AS
     WHERE ho_rating_list.rating = 5
     GROUP BY all_homeowner.homeowner;
 /*update value for occurrences*/
+/*I am not very sure, this statement might not be needed*/
 UPDATE ho_5_rate
 SET rate_num = 0
 WHERE rate_num = NULL;
