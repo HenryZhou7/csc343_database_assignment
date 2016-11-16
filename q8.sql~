@@ -38,7 +38,7 @@ CREATE VIEW result AS
 
 /*return the result in the required manner*/
 SELECT *
-FROM result
+FROM result;
 ORDER BY
-    reciprocals DESC,
+    reciprocals DESC;
     backScratches DESC;

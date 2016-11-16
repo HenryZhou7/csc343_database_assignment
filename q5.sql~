@@ -28,10 +28,9 @@ CREATE VIEW ho_5_rate AS
     GROUP BY all_homeowner.homeowner;
 /*update value for occurrences*/
 /*I am not very sure, this statement might not be needed*/
-/*
 UPDATE ho_5_rate
 SET rate_num = 0
-WHERE rate_num = NULL;*/
+WHERE rate_num = NULL;
 
 /*iterate the process 4 times to create 4 separate tables*/
 CREATE VIEW ho_4_rate AS
@@ -41,10 +40,9 @@ CREATE VIEW ho_4_rate AS
     WHERE ho_rating_list.rating = 4
     GROUP BY all_homeowner.homeowner;
 /*update value for occurrences*/
-/*
 UPDATE ho_4_rate
 SET rate_num = 0
-WHERE rate_num = NULL;*/
+WHERE rate_num = NULL;
 
 /*create table for 3-star rating*/
 CREATE VIEW ho_3_rate AS
@@ -54,10 +52,9 @@ CREATE VIEW ho_3_rate AS
     WHERE ho_rating_list.rating = 3
     GROUP BY all_homeowner.homeowner;
 /*update value for occurrences*/
-/*
 UPDATE ho_3_rate
 SET rate_num = 0
-WHERE rate_num = NULL;*/
+WHERE rate_num = NULL;
 
 /*create table for 2 star rating*/
 CREATE VIEW ho_2_rate AS
@@ -67,10 +64,9 @@ CREATE VIEW ho_2_rate AS
     WHERE ho_rating_list.rating = 2
     GROUP BY all_homeowner.homeowner;
 /*update value for occurrences*/
-/*
 UPDATE ho_2_rate
 SET rate_num = 0
-WHERE rate_num = NULL;*/
+WHERE rate_num = NULL;
 
 /*create table for 1 star rating*/
 CREATE VIEW ho_1_rate AS
@@ -80,10 +76,9 @@ CREATE VIEW ho_1_rate AS
     WHERE ho_rating_list.rating = 1
     GROUP BY all_homeowner.homeowner;
 /*update value for occurrences*/
-/*
 UPDATE ho_1_rate
 SET rate_num = 0
-WHERE rate_num = NULL;*/
+WHERE rate_num = NULL;
 
 
 /*join the different tables respectively*/
