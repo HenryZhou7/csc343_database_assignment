@@ -1,4 +1,4 @@
-SET search TO bnb, public;
+SET search_path TO bnb, public;
 
 /*Find every invalid listing*/
 create view Invalid as
@@ -14,8 +14,8 @@ create view Valid as
 	(
 		select listingID, startdate, numNights
 		from Booking
-	)
-	except Invalid;
+	) as foo
+	except (select * from Invalid);
 
 /*Update the valid view with the property type and city*/
 create view ValidUP as
@@ -24,13 +24,13 @@ create view ValidUP as
 
 /*Update the valid with regulation*/
 create view ValidReg as
-	select ValidUP.listingID, ValidUP.startdate, ValidUP.numNights, ValidUP.owner, CityRegulation.regulationType, CityRegulation.days
+	select ValidUP.listingID, ValidUP.startdate, ValidUP.numNights, ValidUP.owner, ValidUP.city, CityRegulation.regulationType, CityRegulation.days
 	from ValidUP inner join CityRegulation 
 	on ValidUP.city = CityRegulation.city and ValidUP.propertytype = CityRegulation.propertytype;
 
 /*Violate the minimum regulation*/
 create view VioMin as
-	select distinct (ValidReg.owner, ValidReg.listingID, extract(year from ValidReg.startdate) as year, ValidReg.city)
+	select distinct ValidReg.owner, ValidReg.listingID, extract(year from ValidReg.startdate) as year, ValidReg.city
 	from ValidReg
 	where regulationType = 'min' and numNights < days;
 
@@ -43,29 +43,29 @@ create view WithinAYear as
 
 create view StartBefore as
 	select ValidReg.owner, ValidReg.listingID, extract(year from ValidReg.startdate) as year, ValidReg.city, 
-		(to_date(text extract(year from ValidReg.startdate) || "-12-31", "YYYY-MM-DD") - ValidReg.startdate) as stay, ValidReg.numNights as stay, 
+		(to_date(extract(year from ValidReg.startdate)::text || text '-12-31', 'YYYY-MM-DD') - ValidReg.startdate) as stay, 
 		ValidReg.days
 	from ValidReg
 	where extract(year from (ValidReg.startdate + numNights)) = (extract(year from ValidReg.startdate) + 1) and ValidReg.regulationType = 'max';
 
 create view EndAfter as
 	select ValidReg.owner, ValidReg.listingID, (extract(year from ValidReg.startdate) + 1) as year, ValidReg.city, 
-		(ValidReg.numNights - (to_date(text extract(year from ValidReg.startdate) || "-12-31", "YYYY-MM-DD") - ValidReg.startdate)) as stay, 
-		ValidReg.numNights as stay, ValidReg.days
+		(ValidReg.numNights - (to_date(extract(year from ValidReg.startdate)::text || text '-12-31', 'YYYY-MM-DD') - ValidReg.startdate)) as stay, 
+		ValidReg.days
 	from ValidReg
 	where extract(year from (ValidReg.startdate + numNights)) = (extract(year from ValidReg.startdate) + 1) and ValidReg.regulationType = 'max';
 
 create view Total as
 	select owner, listingID, year, city, sum(stay) as period, days
-	from WithinAYear union StartBefore union EndAfter
-	group by listingID, year;
+	from ((select * from WithinAYear) union (select * from StartBefore) union (select * from EndAfter)) as foo
+	group by owner, listingID, year, city, days;
 
 /*Violate the maximum regulation*/
 create view VioMax as
-	select distinct (owner, listingID, year, city)
+	select distinct owner, listingID, year, city
 	from Total
 	where period > days;
 
 /*Result*/
 select owner as homeowner, listingID, year, city
-from VioMax union VioMin;
+from ((select * from VioMax) union (select * from VioMin)) as foo;
