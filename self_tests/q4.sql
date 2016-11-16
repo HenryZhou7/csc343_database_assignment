@@ -185,5 +185,5 @@ CREATE VIEW total_sum AS
 
 /*return the result*/
 /*always initialize the data before running this query, otherwise there will be division by 0*/
-SELECT qualify_sum.qualify_num / total_sum.total_num AS percentage
+SELECT (qualify_sum.qualify_num::float / total_sum.total_num * 100)::integer AS percentage
 FROM qualify_sum, total_sum;

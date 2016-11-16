@@ -11,7 +11,7 @@ CREATE VIEW booking_price AS
 /*find the average price per night per listing*/
 CREATE VIEW avg_listing_price AS
     SELECT listingId, avg(book_price) AS avg_price
-    FROM Listing
+    FROM booking_price
     GROUP BY listingId;
 
 /*compare booking price with those listing price, select those with 25% off or more*/

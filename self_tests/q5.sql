@@ -21,7 +21,7 @@ CREATE VIEW all_homeowner AS
 /*homeowner_id and it 5-star rating occurrences*/
 /*for each table, need to update the NULL value to 0*/
 CREATE VIEW ho_5_rate AS
-    SELECT all_homeowner.homeowner, count(ho_rating_list.rating) AS rate_num
+    SELECT all_homeowner.homeowner, count(ho_rating_list.rating)::integer AS rate_num
     FROM all_homeowner LEFT JOIN ho_rating_list
     ON all_homeowner.homeowner = ho_rating_list.owner
     WHERE ho_rating_list.rating = 5
@@ -35,7 +35,7 @@ WHERE rate_num = NULL;*/
 
 /*iterate the process 4 times to create 4 separate tables*/
 CREATE VIEW ho_4_rate AS
-    SELECT all_homeowner.homeowner, count(ho_rating_list.rating) AS rate_num
+    SELECT all_homeowner.homeowner, count(ho_rating_list.rating)::integer AS rate_num
     FROM all_homeowner LEFT JOIN ho_rating_list
     ON all_homeowner.homeowner = ho_rating_list.owner
     WHERE ho_rating_list.rating = 4
@@ -48,7 +48,7 @@ WHERE rate_num = NULL;*/
 
 /*create table for 3-star rating*/
 CREATE VIEW ho_3_rate AS
-    SELECT all_homeowner.homeowner, count(ho_rating_list.rating) AS rate_num
+    SELECT all_homeowner.homeowner, count(ho_rating_list.rating)::integer AS rate_num
     FROM all_homeowner LEFT JOIN ho_rating_list
     ON all_homeowner.homeowner = ho_rating_list.owner
     WHERE ho_rating_list.rating = 3
@@ -61,7 +61,7 @@ WHERE rate_num = NULL;*/
 
 /*create table for 2 star rating*/
 CREATE VIEW ho_2_rate AS
-    SELECT all_homeowner.homeowner, count(ho_rating_list.rating) AS rate_num
+    SELECT all_homeowner.homeowner, count(ho_rating_list.rating)::integer AS rate_num
     FROM all_homeowner LEFT JOIN ho_rating_list
     ON all_homeowner.homeowner = ho_rating_list.owner
     WHERE ho_rating_list.rating = 2
@@ -74,7 +74,7 @@ WHERE rate_num = NULL;*/
 
 /*create table for 1 star rating*/
 CREATE VIEW ho_1_rate AS
-    SELECT all_homeowner.homeowner, count(ho_rating_list.rating) AS rate_num
+    SELECT all_homeowner.homeowner, count(ho_rating_list.rating)::integer AS rate_num
     FROM all_homeowner LEFT JOIN ho_rating_list
     ON all_homeowner.homeowner = ho_rating_list.owner
     WHERE ho_rating_list.rating = 1
@@ -112,7 +112,7 @@ CREATE VIEW table_54321 AS
     WHERE table_5432.homeownerID = ho_1_rate.homeowner;
     
 /*list all the result in the manner the question required*/
-SELECT *
+SELECT homeownerID, r5::integer, r4::integer, r3::integer, r2::integer, r1::integer
 FROM table_54321
 ORDER BY
     r5 DESC,
