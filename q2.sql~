@@ -65,7 +65,7 @@ CREATE VIEW scraper_max_city AS
 
 /*append the number of requests for each scraper*/
 CREATE VIEW scraper_city_requests AS
-    SELECT scraper_max_city.travelerId, scraper_max_city.city, traveler_request_num.num
+    SELECT scraper_max_city.travelerId, scraper_city.city, traveler_request_num.num
     FROM scraper_max_city, traveler_request_num
     WHERE scraper_max_city.travelerId = traveler_request_num.travelerId;
 
