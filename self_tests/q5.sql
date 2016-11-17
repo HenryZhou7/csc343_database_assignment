@@ -9,6 +9,7 @@ CREATE VIEW ho_rating_list AS
     FROM TravelerRating, Listing
     WHERE TravelerRating.listingId = Listing.listingId;
 
+
 /*find the number of 5/4/3/2/1 ratings for each homeowner respectively*/
 /*then use left join to preserve the identity of each homeowner and fill the rating with NULL*/
 
@@ -16,75 +17,68 @@ CREATE VIEW ho_rating_list AS
 CREATE VIEW all_homeowner AS
     SELECT homeownerId AS homeowner
     FROM Homeowner;
-    
+
 /*create 5-star rating*/
 /*homeowner_id and it 5-star rating occurrences*/
 /*for each table, need to update the NULL value to 0*/
 CREATE VIEW ho_5_rate AS
-    SELECT all_homeowner.homeowner, count(ho_rating_list.rating)::integer AS rate_num
-    FROM all_homeowner LEFT JOIN ho_rating_list
-    ON all_homeowner.homeowner = ho_rating_list.owner
-    WHERE ho_rating_list.rating = 5
-    GROUP BY all_homeowner.homeowner;
+    SELECT *
+    FROM all_homeowner LEFT JOIN (
+		SELECT ho_rating_list.owner , count(rating)::integer AS rate_num
+		FROM ho_rating_list
+		WHERE rating = 5
+		GROUP BY ho_rating_list.owner
+    ) AS foo
+    ON all_homeowner.homeowner = foo.owner;    
 /*update value for occurrences*/
-/*I am not very sure, this statement might not be needed*/
-/*
-UPDATE ho_5_rate
-SET rate_num = 0
-WHERE rate_num = NULL;*/
+
 
 /*iterate the process 4 times to create 4 separate tables*/
 CREATE VIEW ho_4_rate AS
-    SELECT all_homeowner.homeowner, count(ho_rating_list.rating)::integer AS rate_num
-    FROM all_homeowner LEFT JOIN ho_rating_list
-    ON all_homeowner.homeowner = ho_rating_list.owner
-    WHERE ho_rating_list.rating = 4
-    GROUP BY all_homeowner.homeowner;
+    SELECT *
+    FROM all_homeowner LEFT JOIN (
+		SELECT ho_rating_list.owner , count(rating)::integer AS rate_num
+		FROM ho_rating_list
+		WHERE rating = 4
+		GROUP BY ho_rating_list.owner
+    ) AS foo
+    ON all_homeowner.homeowner = foo.owner;
 /*update value for occurrences*/
-/*
-UPDATE ho_4_rate
-SET rate_num = 0
-WHERE rate_num = NULL;*/
 
 /*create table for 3-star rating*/
 CREATE VIEW ho_3_rate AS
-    SELECT all_homeowner.homeowner, count(ho_rating_list.rating)::integer AS rate_num
-    FROM all_homeowner LEFT JOIN ho_rating_list
-    ON all_homeowner.homeowner = ho_rating_list.owner
-    WHERE ho_rating_list.rating = 3
-    GROUP BY all_homeowner.homeowner;
+    SELECT *
+    FROM all_homeowner LEFT JOIN (
+		SELECT ho_rating_list.owner , count(rating)::integer AS rate_num
+		FROM ho_rating_list
+		WHERE rating = 3
+		GROUP BY ho_rating_list.owner
+    ) AS foo
+    ON all_homeowner.homeowner = foo.owner;
 /*update value for occurrences*/
-/*
-UPDATE ho_3_rate
-SET rate_num = 0
-WHERE rate_num = NULL;*/
 
 /*create table for 2 star rating*/
 CREATE VIEW ho_2_rate AS
-    SELECT all_homeowner.homeowner, count(ho_rating_list.rating)::integer AS rate_num
-    FROM all_homeowner LEFT JOIN ho_rating_list
-    ON all_homeowner.homeowner = ho_rating_list.owner
-    WHERE ho_rating_list.rating = 2
-    GROUP BY all_homeowner.homeowner;
-/*update value for occurrences*/
-/*
-UPDATE ho_2_rate
-SET rate_num = 0
-WHERE rate_num = NULL;*/
+    SELECT *
+    FROM all_homeowner LEFT JOIN (
+		SELECT ho_rating_list.owner , count(rating)::integer AS rate_num
+		FROM ho_rating_list
+		WHERE rating = 2
+		GROUP BY ho_rating_list.owner
+    ) AS foo
+    ON all_homeowner.homeowner = foo.owner;
 
 /*create table for 1 star rating*/
 CREATE VIEW ho_1_rate AS
-    SELECT all_homeowner.homeowner, count(ho_rating_list.rating)::integer AS rate_num
-    FROM all_homeowner LEFT JOIN ho_rating_list
-    ON all_homeowner.homeowner = ho_rating_list.owner
-    WHERE ho_rating_list.rating = 1
-    GROUP BY all_homeowner.homeowner;
+    SELECT *
+    FROM all_homeowner LEFT JOIN (
+		SELECT ho_rating_list.owner , count(rating)::integer AS rate_num
+		FROM ho_rating_list
+		WHERE rating = 1
+		GROUP BY ho_rating_list.owner
+    ) AS foo
+    ON all_homeowner.homeowner = foo.owner;
 /*update value for occurrences*/
-/*
-UPDATE ho_1_rate
-SET rate_num = 0
-WHERE rate_num = NULL;*/
-
 
 /*join the different tables respectively*/
 CREATE VIEW table_54 AS

@@ -43,3 +43,10 @@ CREATE VIEW result AS
         biggest_listing.listingId AS listingID
     FROM biggest_discount JOIN biggest_listing
     ON biggest_discount.travelerId = biggest_listing.travelerId;
+
+/*return the final result*/
+SELECT *
+FROM result
+ORDER BY
+    largestBargainPercentage DESC,
+    travelerID ASC;

@@ -17,7 +17,7 @@ CREATE VIEW avg_listing_price AS
 /*compare booking price with those listing price, select those with 25% off or more*/
 CREATE VIEW good_bargain AS
     SELECT booking_price.travelerId, booking_price.listingId, booking_price.startdate,
-        1 - booking_price.book_price / avg_listing_price.avg_price AS discount
+        1 - booking_price.book_price::float / avg_listing_price.avg_price AS discount
     FROM booking_price LEFT JOIN avg_listing_price
     ON booking_price.listingId = avg_listing_price.listingId
     WHERE booking_price.book_price <= 0.75 * avg_listing_price.avg_price;
@@ -39,7 +39,7 @@ CREATE VIEW biggest_listing AS
 /*combine the two tables*/
 CREATE VIEW result AS
     SELECT biggest_discount.travelerId AS travelerID,
-        biggest_discount.biggest_bargain AS largestBargainPercentage,
+        (biggest_discount.biggest_bargain * 100)::integer AS largestBargainPercentage,
         biggest_listing.listingId AS listingID
     FROM biggest_discount JOIN biggest_listing
     ON biggest_discount.travelerId = biggest_listing.travelerId;
