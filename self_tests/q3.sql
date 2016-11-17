@@ -5,7 +5,10 @@ create view Invalid as
 	select t1.listingID, t1.startdate, t1.numNights
 	from Booking as t1 inner join Booking as t2
 	on t1.listingID = t2.listingID
-	where t1.startdate >= t2.startdate and t1.startdate < (t2.startdate + t2.numNights);
+	where t1.startdate > t2.startdate and t1.startdate < (t2.startdate + t2.numNights);
+
+select * from booking;
+select * from invalid;
 
 /*Valid listings*/
 create view Valid as
@@ -67,5 +70,6 @@ create view VioMax as
 	where period > days;
 
 /*Result*/
-select owner as homeowner, listingID, year, city
-from ((select * from VioMax) union (select * from VioMin)) as foo;
+select owner as homeowner, listingID, year::integer, city::text
+from ((select * from VioMax) union (select * from VioMin)) as foo
+order by homeowner ASC;

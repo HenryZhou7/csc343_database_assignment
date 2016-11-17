@@ -200,14 +200,15 @@ create view Neither as
 		from BookingNRequest
 	)) as foo;
 
+
 /*Result*/
-select t1.travelerID, Traveler.email, t1.year, t1.numRequests, t1.numBooking
+select t1.travelerID, Traveler.email, t1.year::integer, t1.numRequests, t1.numBooking
 from 
 (
 	select * from Neither union select * from BookingNRequest
 ) as t1
 inner join Traveler on t1.travelerID = Traveler.travelerID
-order by t1.year DESC;
+order by t1.year DESC, t1.travelerID ASC;
 
 
 
