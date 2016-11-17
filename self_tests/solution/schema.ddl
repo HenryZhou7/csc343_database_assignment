@@ -1,3 +1,7 @@
+DROP SCHEMA IF EXISTS bnb cascade;
+CREATE SCHEMA bnb;
+SET search_path TO bnb, public;
+
 -- A person who is registered as a traveler who uses the company's rental services.
 -- We store their last (surname), first name and email
 CREATE TABLE Traveler (

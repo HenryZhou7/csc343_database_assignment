@@ -176,14 +176,14 @@ CREATE VIEW satisfy_condition AS
     )) AS foo;
 
 CREATE VIEW qualify_sum AS
-    SELECT count(*) AS qualify_num
+    SELECT count(*)::float AS qualify_num
     FROM satisfy_condition;
 
 CREATE VIEW total_sum AS
-    SELECT count(*) AS total_num
+    SELECT count(*)::float AS total_num
     FROM all_owners;
 
 /*return the result*/
 /*always initialize the data before running this query, otherwise there will be division by 0*/
-SELECT (qualify_sum.qualify_num::float / total_sum.total_num * 100)::integer AS percentage
+SELECT (qualify_sum.qualify_num / total_sum.total_num * 100)::integer AS percentage
 FROM qualify_sum, total_sum;

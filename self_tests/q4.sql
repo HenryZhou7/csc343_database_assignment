@@ -27,6 +27,14 @@ CREATE VIEW all_owners_rating AS
     ON all_owners.homeownerId = owner_rating.homeownerId;
 
 /*10 separate tables for past n year rating*/
+CREATE VIEW last_0_rating AS
+    SELECT homeownerId, 
+        avg(rating) AS avg_rating
+    FROM all_owners_rating
+    WHERE date_part('year', startdate) <= date_part('year', current_date) - 0
+        AND date_part('year', startdate) > date_part('year', current_date) - 1
+    GROUP BY homeownerId;
+
 CREATE VIEW last_1_rating AS
     SELECT homeownerId, 
         avg(rating) AS avg_rating
@@ -113,77 +121,89 @@ CREATE VIEW satisfy_condition AS
     SELECT *
     FROM
     ((
+        SELECT homeownerId
+	FROM all_owners
+    )
+	EXCEPT
+    (
         SELECT last_10_rating.homeownerId
-        FROM last_10_rating, last_9_rating
-        WHERE last_10_rating.homeownerId = last_9_rating.homeownerId
-            AND last_10_rating.avg_rating <= last_9_rating.avg_rating
+        FROM last_10_rating JOIN last_9_rating
+	ON last_10_rating.homeownerId = last_9_rating.homeownerId
+        WHERE last_10_rating.avg_rating > last_9_rating.avg_rating
     )
         EXCEPT
     (
         SELECT last_9_rating.homeownerId
-        FROM last_9_rating, last_8_rating
-        WHERE last_9_rating.homeownerId = last_8_rating.homeownerId
-            AND last_9_rating.avg_rating <= last_8_rating.avg_rating
+        FROM last_9_rating JOIN last_8_rating
+	ON last_9_rating.homeownerId = last_8_rating.homeownerId
+        WHERE last_9_rating.avg_rating > last_8_rating.avg_rating
     )
         EXCEPT
     (
         SELECT last_8_rating.homeownerId
-        FROM last_8_rating, last_7_rating
-        WHERE last_8_rating.homeownerId = last_7_rating.homeownerId
-            AND last_8_rating.avg_rating <= last_7_rating.avg_rating
+        FROM last_8_rating JOIN last_7_rating
+	ON last_8_rating.homeownerId = last_7_rating.homeownerId
+        WHERE last_8_rating.avg_rating > last_7_rating.avg_rating
     )
         EXCEPT
     (
         SELECT last_7_rating.homeownerId
-        FROM last_7_rating, last_6_rating
-        WHERE last_7_rating.homeownerId = last_6_rating.homeownerId
-            AND last_7_rating.avg_rating <= last_6_rating.avg_rating
+        FROM last_7_rating JOIN last_6_rating
+	ON last_7_rating.homeownerId = last_6_rating.homeownerId
+        WHERE last_7_rating.avg_rating > last_6_rating.avg_rating
     )
         EXCEPT
     (
         SELECT last_6_rating.homeownerId
-        FROM last_6_rating, last_5_rating
-        WHERE last_6_rating.homeownerId = last_5_rating.homeownerId
-            AND last_6_rating.avg_rating <= last_5_rating.avg_rating
+        FROM last_6_rating JOIN last_5_rating
+	ON last_6_rating.homeownerId = last_5_rating.homeownerId
+        WHERE last_6_rating.avg_rating > last_5_rating.avg_rating
     )
         EXCEPT
     (
         SELECT last_5_rating.homeownerId
-        FROM last_5_rating, last_4_rating
-        WHERE last_5_rating.homeownerId = last_4_rating.homeownerId
-            AND last_5_rating.avg_rating <= last_4_rating.avg_rating
+        FROM last_5_rating JOIN last_4_rating
+	ON last_5_rating.homeownerId = last_4_rating.homeownerId
+        WHERE last_5_rating.avg_rating > last_4_rating.avg_rating
     )
         EXCEPT
     (
         SELECT last_4_rating.homeownerId
-        FROM last_4_rating, last_3_rating
-        WHERE last_4_rating.homeownerId = last_3_rating.homeownerId
-            AND last_4_rating.avg_rating <= last_3_rating.avg_rating
+        FROM last_4_rating JOIN last_3_rating
+	ON last_4_rating.homeownerId = last_3_rating.homeownerId
+        WHERE last_4_rating.avg_rating > last_3_rating.avg_rating
     )
         EXCEPT
     (
         SELECT last_3_rating.homeownerId
-        FROM last_3_rating, last_2_rating
-        WHERE last_3_rating.homeownerId = last_2_rating.homeownerId
-            AND last_3_rating.avg_rating <= last_2_rating.avg_rating
+        FROM last_3_rating JOIN last_2_rating
+	ON last_3_rating.homeownerId = last_2_rating.homeownerId
+        WHERE last_3_rating.avg_rating > last_2_rating.avg_rating
     )
         EXCEPT
     (
         SELECT last_2_rating.homeownerId
-        FROM last_2_rating, last_1_rating
-        WHERE last_2_rating.homeownerId = last_1_rating.homeownerId
-            AND last_2_rating.avg_rating <= last_1_rating.avg_rating
+        FROM last_2_rating JOIN last_1_rating
+	ON last_2_rating.homeownerId = last_1_rating.homeownerId
+        WHERE last_2_rating.avg_rating > last_1_rating.avg_rating
+    )
+	EXCEPT
+    (
+        SELECT last_1_rating.homeownerId
+        FROM last_1_rating JOIN last_0_rating
+	ON last_1_rating.homeownerId = last_0_rating.homeownerId
+        WHERE last_1_rating.avg_rating > last_0_rating.avg_rating
     )) AS foo;
 
 CREATE VIEW qualify_sum AS
-    SELECT count(*) AS qualify_num
+    SELECT count(*)::float AS qualify_num
     FROM satisfy_condition;
 
 CREATE VIEW total_sum AS
-    SELECT count(*) AS total_num
+    SELECT count(*)::float AS total_num
     FROM all_owners;
 
 /*return the result*/
 /*always initialize the data before running this query, otherwise there will be division by 0*/
-SELECT (qualify_sum.qualify_num::float / total_sum.total_num * 100)::integer AS percentage
+SELECT (qualify_sum.qualify_num / total_sum.total_num * 100)::integer AS percentage
 FROM qualify_sum, total_sum;
