@@ -118,9 +118,16 @@ public class Assignment2 {
 		rs = ps.executeQuery();
 		
 		ArrayList<Integer> result = new ArrayList<Integer>();
+		int counter = 0;
 		while(rs.next()){
+			counter ++;
 			int owner = rs.getInt("owner");
-			result.add(owner);
+			if(counter <= 10)
+				result.add(owner);
+			else if(counter > 10 && owner == result.get(9))
+				result.add(owner);
+			else
+				break;
 			System.out.println(owner);
 		}
 		
