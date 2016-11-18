@@ -90,6 +90,10 @@ public class Assignment2 {
       
       	try{
 		queryString =
+<<<<<<< HEAD
+=======
+			"SET search_path TO bnb, public;"+
+>>>>>>> ee81d2afad59d3bce38bb2dafd46a424466f871f
 			"create view TR as "+
 			"select Booking.travelerID, TravelerRating.listingID, TravelerRating.rating "+
 			"from TravelerRating inner join Booking "+
@@ -102,26 +106,58 @@ public class Assignment2 {
 			"create view Rate as "+ 
 			"select travelerID, owner, avg(rating) as rating "+
 			"from TRH "+
+<<<<<<< HEAD
 			"group by travelerID, owner;"+
 	
 			"select t2.owner, sum(t1.rating * t2.rating) as similarity "+
+=======
+			"group by travelerID, owner;";
+		ps = connection.prepareStatement(queryString);
+		ps.executeUpdate();
+		queryString = 
+			"select t2.owner "+
+>>>>>>> ee81d2afad59d3bce38bb2dafd46a424466f871f
 			"from Rate as t1 inner join Rate as t2 "+
 			"on t1.travelerID = t2.travelerID "+
 			"where t1.owner = ? and t2.owner <> ? "+
 			"group by t2.owner "+
+<<<<<<< HEAD
 			"order by similarity DESC, owner ASC;";
+=======
+			"order by sum(t1.rating * t2.rating) DESC, owner ASC;";
+>>>>>>> ee81d2afad59d3bce38bb2dafd46a424466f871f
 		ps = connection.prepareStatement(queryString);
 		ps.setInt(1, homeownerID);
 		ps.setInt(2, homeownerID);
 		
 		rs = ps.executeQuery();
 		
+<<<<<<< HEAD
 		for(int i = 0; rs.next() || i < 10; i++){
 			int owner = rs.getInt("owner");
 			System.out.println(owner);
 		}
       	}catch(SQLException se){
 		System.out.println("Error");
+=======
+		ArrayList<Integer> result = new ArrayList<Integer>();
+		int counter = 0;
+		while(rs.next()){
+			counter ++;
+			int owner = rs.getInt("owner");
+			if(counter <= 10)
+				result.add(owner);
+			else if(counter > 10 && owner == result.get(9))
+				result.add(owner);
+			else
+				break;
+			System.out.println(owner);
+		}
+		
+		return result;
+      	}catch(SQLException se){
+		se.printStackTrace();
+>>>>>>> ee81d2afad59d3bce38bb2dafd46a424466f871f
 	}
       return null;
    }
@@ -161,6 +197,7 @@ public class Assignment2 {
 
           //find the listingId given the requestId
           int listingId = rs.getInt("listingId");
+<<<<<<< HEAD
 	  int travelerId = rs.getInt("travelerID");
 	  int numGuests = rs.getInt("numGuests");
           if (rs.next() == true){ //there exists more than one requestId
@@ -169,6 +206,15 @@ public class Assignment2 {
 	  
           //check if the same booking has been added to the Booking table
           queryString = "SELECT * FROM Booking WHERE listingId = ? AND startdate = ? AND numNights = ? AND price = ?";
+=======
+          if (rs.next() == true){ //there exists more than one requestId
+              System.out.println("More than one listingIds");
+              return false;
+          }
+
+          //check if the same booking has been added to the Booking table
+          queryString = "SELECT * FROM BookingRequest WHERE listingId = ? AND startdate = ? AND numNights = ? AND price = ?";
+>>>>>>> ee81d2afad59d3bce38bb2dafd46a424466f871f
           ps = connection.prepareStatement(queryString);
 
           ps.setInt(1, listingId);
@@ -178,11 +224,16 @@ public class Assignment2 {
           rs = ps.executeQuery();
 
           if (rs.next() == true){ //there is already something in the booking table
+<<<<<<< HEAD
 	      return false;
+=======
+              return false;
+>>>>>>> ee81d2afad59d3bce38bb2dafd46a424466f871f
           }
 
           //if it hasn't been added then insert the entry to the Booking table
       
+<<<<<<< HEAD
           queryString = "SET search_path TO bnb, public; " + 
 	  		"INSERT INTO Booking " +
                         "VALUES (?, ?, ?, ?, ?, ?)";
@@ -195,16 +246,32 @@ public class Assignment2 {
           ps.setInt(5, numGuests);
           ps.setInt(6, price);
 	  ps.executeUpdate();
+=======
+          queryString = "INSERT INTO Booking " +
+                        " VALUES (?, ?, ?, ?, ?, ?)";
+          ps = connection.prepareStatement(queryString);
+
+          ps.setInt(1, listingId);
+          ps.setDate(2, new java.sql.Date(start.getTime()));
+          ps.setNull(3, java.sql.Types.INTEGER); //can travelerID be null?
+          ps.setInt(4, numNights);
+          ps.setNull(5, java.sql.Types.INTEGER);
+          ps.setInt(6, price);
+>>>>>>> ee81d2afad59d3bce38bb2dafd46a424466f871f
 
           return true; 
       }
       catch(SQLException se){
+<<<<<<< HEAD
       	  se.printStackTrace();
+=======
+>>>>>>> ee81d2afad59d3bce38bb2dafd46a424466f871f
           return false;
       }
    }
 
    public static void main(String[] args) {
+<<<<<<< HEAD
    
        System.out.println("Beiginning!");
        
@@ -226,6 +293,18 @@ public class Assignment2 {
        }
        
        return;
+=======
+      // You can put testing code in here. It will not affect our autotester.
+      try{
+      Assignment2 a2 = new Assignment2();
+      a2.connectDB("jdbc:postgresql://localhost:5432/csc343h-hushi4?searchpath=bnb", "hushi4", "");
+      a2.homeownerRecommendation(4000);
+      //a2.disconnectDB();
+      }catch(SQLException se){
+      		System.out.println("Error");
+      }
+      System.out.println("Boo!");
+>>>>>>> ee81d2afad59d3bce38bb2dafd46a424466f871f
    }
    
    
