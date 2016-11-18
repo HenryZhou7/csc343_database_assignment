@@ -81,7 +81,53 @@ public class Assignment2 {
     * @return               a list of the 10 most similar homeowners
     */
    public ArrayList homeownerRecommendation(int homeownerID) {
-      // Implement this method!
+      	// Implement this method!
+      	String queryString;
+      	PreparedStatement ps;
+      	ResultSet rs;
+      
+      	try{
+		queryString =
+			"SET search_path TO bnb, public;"+
+			"create view TR as "+
+			"select Booking.travelerID, TravelerRating.listingID, TravelerRating.rating "+
+			"from TravelerRating inner join Booking "+
+			"on TravelerRating.listingID = Booking.listingID and TravelerRating.startDate = Booking.startDate;"+
+	
+			"create view TRH as "+ 
+			"select TR.travelerID, Listing.owner, TR.rating "+
+			"from TR inner join Listing on TR.listingID = Listing.listingID;"+
+
+			"create view Rate as "+ 
+			"select travelerID, owner, avg(rating) as rating "+
+			"from TRH "+
+			"group by travelerID, owner;";
+		ps = connection.prepareStatement(queryString);
+		ps.executeUpdate();
+		queryString = 
+			"select t2.owner "+
+			"from Rate as t1 inner join Rate as t2 "+
+			"on t1.travelerID = t2.travelerID "+
+			"where t1.owner = ? and t2.owner <> ? "+
+			"group by t2.owner "+
+			"order by sum(t1.rating * t2.rating) DESC, owner ASC;";
+		ps = connection.prepareStatement(queryString);
+		ps.setInt(1, homeownerID);
+		ps.setInt(2, homeownerID);
+		
+		rs = ps.executeQuery();
+		
+		ArrayList<Integer> result = new ArrayList<Integer>();
+		while(rs.next()){
+			int owner = rs.getInt("owner");
+			result.add(owner);
+			System.out.println(owner);
+		}
+		
+		return result;
+      	}catch(SQLException se){
+		se.printStackTrace();
+	}
       return null;
    }
 
@@ -104,57 +150,71 @@ public class Assignment2 {
       String queryString;
       ResultSet rs;
       PreparedStatement ps;
-
-      //check if the booking request has been made
-      queryString = "SELECT * FROM BookingRequest WHERE requestId = ?";
-      ps = connection.prepareStatement(queryString);
-
-      ps.setInt(1, requestId);
-      rs = ps.executeQuery();
-
-      if (rs.next() == false){ //the booking requestid is not found
-          return false;
-      }
-
-      //find the listingId given the requestId
-      int listingId = rs.getInt("listingId");
-      if (rs.next() == true){ //there exists more than one requestId
-          System.out.println("More than one listingIds");
-          return false;
-      }
-
-      //check if the same booking has been added to the Booking table
-      queryString = "SELECT * FROM BookingRequest WHERE listingId = ? AND startdate = ? AND numNights = ? AND price = ?";
-      ps = connection.prepareStatement(queryString);
-
-      ps.setInt(1, listingId);
-      ps.setDate(2, new java.sql.Date(start.getTime()));
-      ps.setInt(3, numNights);
-      ps.setInt(4, price);
-      rs = ps.executeQuery();
-
-      if (rs.next() == true){ //there is already something in the booking table
-          return false;
-      }
-
-      //if it hasn't been added then insert the entry to the Booking table
       
-      queryString = "INSERT INTO Booking " +
-                    " VALUES (?, ?, ?, ?, ?, ?)";
-      ps = connection.prepareStatement(queryString);
+      try{
 
-      ps.setInt(1, listingId);
-      ps.setDate(2, new java.sql.Date(start.getTime()));
-      ps.setNull(3, java.sql.Types.INTEGER); //can travelerID be null?
-      ps.setInt(4, numNights);
-      ps.setNull(5, java.sql.Types.INTEGER);
-      ps.setInt(6, price);
+          //check if the booking request has been made
+          queryString = "SELECT * FROM BookingRequest WHERE requestId = ?";
+          ps = connection.prepareStatement(queryString);
 
-      return true; 
+          ps.setInt(1, requestId);
+          rs = ps.executeQuery();
+
+          if (rs.next() == false){ //the booking requestid is not found
+              return false;
+          }
+
+          //find the listingId given the requestId
+          int listingId = rs.getInt("listingId");
+          if (rs.next() == true){ //there exists more than one requestId
+              System.out.println("More than one listingIds");
+              return false;
+          }
+
+          //check if the same booking has been added to the Booking table
+          queryString = "SELECT * FROM BookingRequest WHERE listingId = ? AND startdate = ? AND numNights = ? AND price = ?";
+          ps = connection.prepareStatement(queryString);
+
+          ps.setInt(1, listingId);
+          ps.setDate(2, new java.sql.Date(start.getTime()));
+          ps.setInt(3, numNights);
+          ps.setInt(4, price);
+          rs = ps.executeQuery();
+
+          if (rs.next() == true){ //there is already something in the booking table
+              return false;
+          }
+
+          //if it hasn't been added then insert the entry to the Booking table
+      
+          queryString = "INSERT INTO Booking " +
+                        " VALUES (?, ?, ?, ?, ?, ?)";
+          ps = connection.prepareStatement(queryString);
+
+          ps.setInt(1, listingId);
+          ps.setDate(2, new java.sql.Date(start.getTime()));
+          ps.setNull(3, java.sql.Types.INTEGER); //can travelerID be null?
+          ps.setInt(4, numNights);
+          ps.setNull(5, java.sql.Types.INTEGER);
+          ps.setInt(6, price);
+
+          return true; 
+      }
+      catch(SQLException se){
+          return false;
+      }
    }
 
    public static void main(String[] args) {
       // You can put testing code in here. It will not affect our autotester.
+      try{
+      Assignment2 a2 = new Assignment2();
+      a2.connectDB("jdbc:postgresql://localhost:5432/csc343h-hushi4?searchpath=bnb", "hushi4", "");
+      a2.homeownerRecommendation(4000);
+      //a2.disconnectDB();
+      }catch(SQLException se){
+      		System.out.println("Error");
+      }
       System.out.println("Boo!");
    }
 
