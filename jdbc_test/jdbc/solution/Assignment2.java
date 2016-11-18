@@ -1,7 +1,5 @@
 import java.sql.*;
 import java.util.Date;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
 
 // If you are looking for Java data structures, these are highly useful.
 // Remember that an important part of your mark is for doing as much in SQL (not Java) as you can.
@@ -161,14 +159,13 @@ public class Assignment2 {
 
           //find the listingId given the requestId
           int listingId = rs.getInt("listingId");
-	  int travelerId = rs.getInt("travelerID");
-	  int numGuests = rs.getInt("numGuests");
           if (rs.next() == true){ //there exists more than one requestId
+              System.out.println("More than one listingIds");
               return false;
           }
-	  
+
           //check if the same booking has been added to the Booking table
-          queryString = "SELECT * FROM Booking WHERE listingId = ? AND startdate = ? AND numNights = ? AND price = ?";
+          queryString = "SELECT * FROM BookingRequest WHERE listingId = ? AND startdate = ? AND numNights = ? AND price = ?";
           ps = connection.prepareStatement(queryString);
 
           ps.setInt(1, listingId);
@@ -178,63 +175,32 @@ public class Assignment2 {
           rs = ps.executeQuery();
 
           if (rs.next() == true){ //there is already something in the booking table
-	      return false;
+              return false;
           }
 
           //if it hasn't been added then insert the entry to the Booking table
       
-          queryString = "SET search_path TO bnb, public; " + 
-	  		"INSERT INTO Booking " +
-                        "VALUES (?, ?, ?, ?, ?, ?)";
+          queryString = "INSERT INTO Booking " +
+                        " VALUES (?, ?, ?, ?, ?, ?)";
           ps = connection.prepareStatement(queryString);
-	  
+
           ps.setInt(1, listingId);
           ps.setDate(2, new java.sql.Date(start.getTime()));
-          ps.setInt(3, travelerId); 
+          ps.setNull(3, java.sql.Types.INTEGER); //can travelerID be null?
           ps.setInt(4, numNights);
-          ps.setInt(5, numGuests);
+          ps.setNull(5, java.sql.Types.INTEGER);
           ps.setInt(6, price);
-	  ps.executeUpdate();
 
           return true; 
       }
       catch(SQLException se){
-      	  se.printStackTrace();
           return false;
       }
    }
 
    public static void main(String[] args) {
-   
-       System.out.println("Beiginning!");
-       
-       Assignment2 a2;
-       try{
-           System.out.println("In try block");
-           a2 = new Assignment2();
-	   a2.connectDB("jdbc:postgresql://localhost:5432/csc343h-zhouyuh9", "zhouyuh9", "");
-	   
-	   SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd"); 
-           boolean bookingSuccessful = a2.booking(6000, ft.parse("2016-10-05"), 2, 120);
-           System.out.println(bookingSuccessful);
-	   
-	   a2.disconnectDB();
-       }
-       catch(Exception se){
-           System.out.println("Exception error");
-	   return;
-       }
-       
-       return;
+      // You can put testing code in here. It will not affect our autotester.
+      System.out.println("Boo!");
    }
-   
-   
-   
-   
-   
-   
-   
-   
-   
 
 }

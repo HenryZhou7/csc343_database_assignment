@@ -98,13 +98,14 @@ public class JDBCTester {
 		String message;
 		int mark;
 		String status;
+		
 		if (oracleBooked == testBooked) {
 			message = "All good";
 			mark = 1;
 			status = "pass";
 		}
 		else {
-			message = "booking() output differs";
+			message = "booking() output differs" + String.valueOf(oracleBooked) + String.valueOf(testBooked);
 			mark = 0;
 			status = "fail";
 		}

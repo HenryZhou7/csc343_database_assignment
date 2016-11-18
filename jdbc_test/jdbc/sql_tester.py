@@ -95,7 +95,7 @@ class SQLTester:
         oracle_num_results = len(oracle_results)
         test_num_results = len(test_results)
         if oracle_num_results != test_num_results:
-            return 'Expected {} rows instead of {}'.format(oracle_num_results, test_num_results), 0, 'fail'
+            return 'Expected {} rows instead of {} error is from here'.format(oracle_num_results, test_num_results), 0, 'fail'
         for i, oracle_row in enumerate(oracle_results):
             if oracle_row != test_results[i]:
                 return 'Expected row {} to be {} instead of {}'.format(i, oracle_row, test_results[i]), 0, 'fail'

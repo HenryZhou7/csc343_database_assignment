@@ -1,0 +1,14 @@
+(java) booking + datab - All good
+ Expected: true
+ Actual: true
+
+booking + datab - All good
+ Expected Columns:
+  ['listingid', 'startdate', 'travelerid', 'numnights', 'numguests', 'price']
+ Actual Columns:
+  ['listingid', 'startdate', 'travelerid', 'numnights', 'numguests', 'price']
+ Expected Rows:
+  (3000, datetime.date(2016, 10, 5), 1000, 2, 1, 120)
+ Actual Rows:
+  (3000, datetime.date(2016, 10, 5), 1000, 2, 1, 120)
+

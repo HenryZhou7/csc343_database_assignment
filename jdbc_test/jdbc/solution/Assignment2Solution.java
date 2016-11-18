@@ -88,6 +88,7 @@ public class Assignment2Solution {
 
       Assignment2Solution a2;
       try {
+      	System.out.println("In try block");
         a2 = new Assignment2Solution();
         a2.connectDB("jdbc:postgresql://localhost:5432/csc343h-t5dangel", "t5dangel", "");
 
