@@ -81,7 +81,46 @@ public class Assignment2 {
     * @return               a list of the 10 most similar homeowners
     */
    public ArrayList homeownerRecommendation(int homeownerID) {
-      // Implement this method!
+      	// Implement this method!
+      	String queryString;
+      	PreparedStatement ps;
+      	ResultSet rs;
+      
+      	try{
+		queryString =
+			"create view TR as "+
+			"select Booking.travelerID, TravelerRating.listingID, TravelerRating.rating "+
+			"from TravelerRating inner join Booking "+
+			"on TravelerRating.listingID = Booking.listingID and TravelerRating.startDate = Booking.startDate;"+
+	
+			"create view TRH as "+ 
+			"select TR.travelerID, Listing.owner, TR.rating "+
+			"from TR inner join Listing on TR.listingID = Listing.listingID;"+
+
+			"create view Rate as "+ 
+			"select travelerID, owner, avg(rating) as rating "+
+			"from TRH "+
+			"group by travelerID, owner;"+
+	
+			"select t2.owner, sum(t1.rating * t2.rating) as similarity "+
+			"from Rate as t1 inner join Rate as t2 "+
+			"on t1.travelerID = t2.travelerID "+
+			"where t1.owner = ? and t2.owner <> ? "+
+			"group by t2.owner "+
+			"order by similarity DESC, owner ASC;";
+		ps = connection.prepareStatement(queryString);
+		ps.setInt(1, homeownerID);
+		ps.setInt(2, homeownerID);
+		
+		rs = ps.executeQuery();
+		
+		for(int i = 0; rs.next() || i < 10; i++){
+			int owner = rs.getInt("owner");
+			System.out.println(owner);
+		}
+      	}catch(SQLException se){
+		System.out.println("Error");
+	}
       return null;
    }
 
