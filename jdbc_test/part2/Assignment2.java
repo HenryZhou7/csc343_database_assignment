@@ -90,6 +90,7 @@ public class Assignment2 {
       
       	try{
 		queryString =
+			"SET search_path TO bnb, public;"+
 			"create view TR as "+
 			"select Booking.travelerID, TravelerRating.listingID, TravelerRating.rating "+
 			"from TravelerRating inner join Booking "+
@@ -102,26 +103,38 @@ public class Assignment2 {
 			"create view Rate as "+ 
 			"select travelerID, owner, avg(rating) as rating "+
 			"from TRH "+
-			"group by travelerID, owner;"+
-	
-			"select t2.owner, sum(t1.rating * t2.rating) as similarity "+
+			"group by travelerID, owner;";
+		ps = connection.prepareStatement(queryString);
+		ps.executeUpdate();
+		queryString = 
+			"select t2.owner "+
 			"from Rate as t1 inner join Rate as t2 "+
 			"on t1.travelerID = t2.travelerID "+
 			"where t1.owner = ? and t2.owner <> ? "+
 			"group by t2.owner "+
-			"order by similarity DESC, owner ASC;";
+			"order by sum(t1.rating * t2.rating) DESC, owner ASC;";
 		ps = connection.prepareStatement(queryString);
 		ps.setInt(1, homeownerID);
 		ps.setInt(2, homeownerID);
 		
 		rs = ps.executeQuery();
 		
-		for(int i = 0; rs.next() || i < 10; i++){
+		ArrayList<Integer> result = new ArrayList<Integer>();
+		int counter = 0;
+		while(rs.next()){
+			counter ++;
 			int owner = rs.getInt("owner");
-			System.out.println(owner);
+			if(counter <= 10)
+				result.add(owner);
+			else if(counter > 10 && owner == result.get(9))
+				result.add(owner);
+			else
+				break;
 		}
+		
+		return result;
       	}catch(SQLException se){
-		System.out.println("Error");
+		se.printStackTrace();
 	}
       return null;
    }
