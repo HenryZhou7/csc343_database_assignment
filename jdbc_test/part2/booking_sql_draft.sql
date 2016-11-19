@@ -14,14 +14,32 @@ CREATE VIEW exist_in_booking_request AS
     WHERE BookingRequest = requestId;
 
 /*check the result in java, if it is NULL then return false*/
+/*If there exists a booking request already in the table*/
+/*get the listingid, startdate, numnights*/
 
+/*need to satisfy two conditions*/
+/*all the bookings with the same listingid's enddate should be smaller than current start*/
+/*all the bookings with the same listingid's startdate should be larger than current start + numnights*/
 
-/*get the corresponding listing id given the request id*/
-CREATE VIEW listing_value AS
-    SELECT listingId
-    FROM BookingRequest
-    WHERE requestId = requestId;
+CREATE VIEW violation AS
+	SELECT * 
+	FROM
+	((
+	SELECT listingID
+	FROM Booking
+	WHERE listingID = <my_listing_value>
+		AND startdate + numnights::integer <= <my_start_date>
+	)
+		UNION
+	(
+	SELECT listingId
+	FROM Booking
+	WHERE listingID = <my_listing_value>
+		AND startdate <= <my_start_date> + <my_numnights>
+	))AS foo;
 
+/*check to see if there is any violation in the table, if violation is non-empty, then return false*/
+/*otherwise insert the new entry into the table booking*/
 
 /*check whether the same entry is already in the booking table*/
 CREATE VIEW exist_in_booking AS
