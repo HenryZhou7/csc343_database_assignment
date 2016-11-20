@@ -72,4 +72,4 @@ create view VioMax as
 /*Result*/
 select owner as homeowner, listingID, year::integer, city::text
 from ((select * from VioMax) union (select * from VioMin)) as foo
-order by homeowner ASC;
+order by homeowner ASC, listingID ASC, year ASC;

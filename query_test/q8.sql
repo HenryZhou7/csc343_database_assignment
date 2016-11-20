@@ -53,4 +53,5 @@ SELECT *
 FROM result
 ORDER BY
     reciprocals DESC,
-    backScratches DESC;
+    backScratches DESC,
+    travelerID ASC;	
