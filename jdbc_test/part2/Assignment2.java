@@ -174,8 +174,8 @@ public class Assignment2 {
 
           //find the listingId given the requestId
           int listingId = rs.getInt("listingId");
-	  int travelerId = rs.getInt("travelerID");
-	  int numGuests = rs.getInt("numGuests");
+	      int travelerId = rs.getInt("travelerID");
+	      int numGuests = rs.getInt("numGuests");
           if (rs.next() == true){ //there exists more than one requestId
               return false;
           }
@@ -194,6 +194,37 @@ public class Assignment2 {
 	      return false;
           }
 
+          /*check violation if the new entry is inserted into the table*/
+          queryString = "CREATE VIEW start_violation AS " +
+                        "SELECT listingId " +
+                        "FROM Booking " +
+                        "WHERE listingID = ? AND startdate + numNights <= ?; " +
+
+                        "CREATE VIEW end_violation AS " +
+                        "SELECT listingId " +
+                        "FROM Booking " +
+                        "WHERE listingId = ? AND startdate <= ? + ?; ";
+          
+          //update the query String
+          ps.setInt(1, listingId);
+          ps.setDate(2, java.sql.Date(start.getTime()));
+          ps.setInt(3, listingId);
+          ps.setDate(4, java.sql.Date(start.getTime()));
+          ps.setDate(5, numNights);
+          ps = connection.prepareStatement(queryString);
+          ps.executeUpdate();
+
+          //find if there exist any violation
+          queryString = "SELECT * " +
+                        "FROM start_violation, endviolation;";
+          ps = connection.prepareStatement(queryString);
+          rs = ps.executeQuery();
+
+          if (rs.next() != false){//invalid possible entry
+              return false;
+          }
+                        
+                        
           //if it hasn't been added then insert the entry to the Booking table
       
           queryString = "SET search_path TO bnb, public; " + 
