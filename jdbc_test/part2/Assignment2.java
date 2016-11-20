@@ -195,28 +195,35 @@ public class Assignment2 {
           }
 
           /*check violation if the new entry is inserted into the table*/
-          queryString = "CREATE VIEW start_violation AS " +
-                        "SELECT listingId " +
-                        "FROM Booking " +
-                        "WHERE listingID = ? AND startdate + numNights <= ?; " +
-
-                        "CREATE VIEW end_violation AS " +
-                        "SELECT listingId " +
-                        "FROM Booking " +
-                        "WHERE listingId = ? AND startdate <= ? + ?; ";
           
-          //update the query String
-          ps.setInt(1, listingId);
-          ps.setDate(2, new java.sql.Date(start.getTime()));
-          ps.setInt(3, listingId);
-          ps.setDate(4, new java.sql.Date(start.getTime()));
-          ps.setInt(5, numNights);
-          ps = connection.prepareStatement(queryString);
-          ps.executeUpdate();
+	  queryString = "SET search_path TO bnb, public; " +
+			"CREATE TABLE start_violation AS " +
+                        "SELECT listingId " +
+                        "FROM Booking " +
+                        "WHERE listingID = ? AND startdate + numNights <= ?; ";
+	  ps = connection.prepareStatement(queryString); 
+	  ps.setInt(1, listingId);
+	  ps.setDate(2, new java.sql.Date(start.getTime()));
+	  //ps = connection.prepareStatement(queryString);
+	  ps.executeUpdate();
 
-          //find if there exist any violation
-          queryString = "SELECT * " +
-                        "FROM start_violation, endviolation;";
+	  queryString = "SET search_path TO bnb, public; " +		
+                        "CREATE TABLE end_violation AS " +
+                        "SELECT listingId " +
+                        "FROM Booking " +
+                        "WHERE listingId = ? AND startdate <= ?; ";
+          ps = connection.prepareStatement(queryString);
+          ps.setInt(1, listingId);
+	  //ps.setInt(2, numNights);
+          ps.setDate(2, new java.sql.Date(start.getTime() + numNights));
+          //ps.setInt(3, numNights);
+          //ps = connection.prepareStatement(queryString);
+          ps.executeUpdate();
+	
+	  
+          
+	  //find if there exist any violation
+          queryString = "(SELECT * FROM start_violation) UNION (SELECT * FROM end_violation);";
           ps = connection.prepareStatement(queryString);
           rs = ps.executeQuery();
 
