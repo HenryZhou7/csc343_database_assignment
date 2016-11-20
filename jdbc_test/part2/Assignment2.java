@@ -207,10 +207,10 @@ public class Assignment2 {
           
           //update the query String
           ps.setInt(1, listingId);
-          ps.setDate(2, java.sql.Date(start.getTime()));
+          ps.setDate(2, new java.sql.Date(start.getTime()));
           ps.setInt(3, listingId);
-          ps.setDate(4, java.sql.Date(start.getTime()));
-          ps.setDate(5, numNights);
+          ps.setDate(4, new java.sql.Date(start.getTime()));
+          ps.setInt(5, numNights);
           ps = connection.prepareStatement(queryString);
           ps.executeUpdate();
 
