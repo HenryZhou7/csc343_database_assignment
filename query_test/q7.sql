@@ -37,12 +37,27 @@ CREATE VIEW biggest_listing AS
     WHERE good_bargain.discount = biggest_discount.biggest_bargain;
 
 /*combine the two tables*/
-CREATE VIEW result AS
+CREATE VIEW possible_result AS
     SELECT biggest_discount.travelerId AS travelerID,
         (biggest_discount.biggest_bargain * 100)::integer AS largestBargainPercentage,
         biggest_listing.listingId AS listingID
     FROM biggest_discount JOIN biggest_listing
     ON biggest_discount.travelerId = biggest_listing.travelerId;
+
+/*filter out those unqualified*/
+CREATE VIEW qualify AS
+    SELECT travelerId
+    FROM Booking
+    GROUP BY travelerId
+    HAVING count(*) >= 3; 	
+
+/*only select those have appeared in qualify view */
+CREATE VIEW result AS
+	SELECT possible_result.travelerId AS travelerID,
+		largestBargainPercentage,
+		listingID
+	FROM possible_result
+	WHERE travelerId exists(SELECT qualify.travelerId FROM qualify);	
 
 /*return the final result*/
 SELECT *

@@ -27,7 +27,7 @@ create view ValidUP as
 create view ValidReg as
 	select ValidUP.listingID, ValidUP.startdate, ValidUP.numNights, ValidUP.owner, ValidUP.city, CityRegulation.regulationType, CityRegulation.days
 	from ValidUP inner join CityRegulation 
-	on ValidUP.city = CityRegulation.city and ValidUP.propertytype = CityRegulation.propertytype;
+	on ValidUP.city = CityRegulation.city and (ValidUP.propertytype = CityRegulation.propertytype or CityRegulation.propertytype is null);
 
 /*Violate the minimum regulation*/
 create view VioMin as
