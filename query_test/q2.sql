@@ -64,8 +64,9 @@ CREATE VIEW scraper_city AS
 CREATE VIEW scraper_city_num AS
     SELECT travelerId, city, count(listingId) AS city_num 
     FROM scraper_city
-    GROUP BY travelerId, city;
-    
+    GROUP BY travelerId, city
+    ORDER BY city;
+	    
 /*only preserve those city num greater than or equal to max city_num per traveler*/
 CREATE VIEW scraper_max_city AS
     SELECT s1.travelerId, s1.city, s1.city_num
@@ -86,7 +87,7 @@ CREATE VIEW scraper_city_requests AS
 /*append more personal information such as name and email*/
 CREATE VIEW scraper_all_info AS
     SELECT Traveler.travelerId, 
-    	   Traveler.firstname || Traveler.surname AS name, 
+    	   Traveler.firstname || ' ' ||  Traveler.surname AS name, 
            Traveler.email, 
            scraper_city_requests.city AS mostRequestedCity, 
            scraper_city_requests.num AS numRequests

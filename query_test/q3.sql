@@ -7,8 +7,6 @@ create view Invalid as
 	on t1.listingID = t2.listingID
 	where t1.startdate > t2.startdate and t1.startdate < (t2.startdate + t2.numNights);
 
-select * from booking;
-select * from invalid;
 
 /*Valid listings*/
 create view Valid as
