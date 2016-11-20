@@ -26,7 +26,7 @@ CREATE VIEW non_committed AS
         EXCEPT
     (
         SELECT *
-        FROM request_log
+        FROM book_log
     );
 
 CREATE VIEW all_travelers AS
