@@ -34,7 +34,7 @@ CREATE VIEW all_travelers AS
     FROM Traveler;
 
 CREATE VIEW never_request_traveler AS
-    SELECT *
+    SELECT travelerId
     FROM
     ((
         SELECT travelerId
@@ -49,12 +49,12 @@ CREATE VIEW never_request_traveler AS
 /*subtract non_committed and never_request traveler from all travelers to get the id of committed*/
 CREATE VIEW committed_id AS
     (
-        SELECT *
-        FROM all_travelers
+        SELECT travelerId
+        FROM Booking 
     )
         EXCEPT
     (
-        SELECT *
+        SELECT travelerId
         FROM never_request_traveler
     )
         EXCEPT
@@ -70,7 +70,7 @@ CREATE VIEW committed_surname AS
     WHERE committed_id.travelerId = Traveler.travelerId;
 
 CREATE VIEW committed_info AS
-    SELECT Booking.travelerId, committed_surname.surname, 
+    SELECT Booking.travelerId, committed_surname.surname::text, 
         count(DISTINCT listingId)::bigint AS numListings
     FROM committed_surname INNER JOIN Booking
     ON committed_surname.travelerId = Booking.travelerId 
