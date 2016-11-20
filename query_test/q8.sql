@@ -40,8 +40,8 @@ CREATE VIEW scratch_backs AS
 /*combine two of the tables*/
 CREATE VIEW result AS
     SELECT reciprocal.travelerId AS travelerID, 
-        reciprocal.reciprocal_num AS reciprocals,
-        scratch_backs.scratch_backs_num AS backScratches
+        reciprocal.reciprocal_num::bigint AS reciprocals,
+        scratch_backs.scratch_backs_num::bigint AS backScratches
     FROM reciprocal, scratch_backs
     WHERE reciprocal.travelerId = scratch_backs.travelerId;
 

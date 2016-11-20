@@ -37,7 +37,7 @@ CREATE VIEW ho_5_rate AS
 CREATE VIEW ho_4_rate AS
     SELECT *
     FROM all_homeowner LEFT JOIN (
-		SELECT ho_rating_list.owner , count(rating)::integer AS rate_num
+		SELECT ho_rating_list.owner , count(rating)::bigint AS rate_num
 		FROM ho_rating_list
 		WHERE rating = 4
 		GROUP BY ho_rating_list.owner
@@ -49,7 +49,7 @@ CREATE VIEW ho_4_rate AS
 CREATE VIEW ho_3_rate AS
     SELECT *
     FROM all_homeowner LEFT JOIN (
-		SELECT ho_rating_list.owner , count(rating)::integer AS rate_num
+		SELECT ho_rating_list.owner , count(rating)::bigint AS rate_num
 		FROM ho_rating_list
 		WHERE rating = 3
 		GROUP BY ho_rating_list.owner
@@ -61,7 +61,7 @@ CREATE VIEW ho_3_rate AS
 CREATE VIEW ho_2_rate AS
     SELECT *
     FROM all_homeowner LEFT JOIN (
-		SELECT ho_rating_list.owner , count(rating)::integer AS rate_num
+		SELECT ho_rating_list.owner , count(rating)::bigint AS rate_num
 		FROM ho_rating_list
 		WHERE rating = 2
 		GROUP BY ho_rating_list.owner
@@ -72,7 +72,7 @@ CREATE VIEW ho_2_rate AS
 CREATE VIEW ho_1_rate AS
     SELECT *
     FROM all_homeowner LEFT JOIN (
-		SELECT ho_rating_list.owner , count(rating)::integer AS rate_num
+		SELECT ho_rating_list.owner , count(rating)::bigint AS rate_num
 		FROM ho_rating_list
 		WHERE rating = 1
 		GROUP BY ho_rating_list.owner
@@ -106,7 +106,7 @@ CREATE VIEW table_54321 AS
     WHERE table_5432.homeownerID = ho_1_rate.homeowner;
     
 /*list all the result in the manner the question required*/
-SELECT homeownerID, r5::integer, r4::integer, r3::integer, r2::integer, r1::integer
+SELECT homeownerID, r5::bigint, r4::bigint, r3::bigint, r2::bigint, r1::bigint
 FROM table_54321
 ORDER BY
     r5 DESC,

@@ -71,7 +71,7 @@ CREATE VIEW committed_surname AS
 
 CREATE VIEW committed_info AS
     SELECT Booking.travelerId, committed_surname.surname, 
-        count(DISTINCT listingId) AS numListings
+        count(DISTINCT listingId)::bigint AS numListings
     FROM committed_surname INNER JOIN Booking
     ON committed_surname.travelerId = Booking.travelerId 
     GROUP BY Booking.travelerId, committed_surname.surname;
