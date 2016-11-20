@@ -5,7 +5,7 @@ SET search_path TO bnb, public;
 /*find the booking price per night*/
 /*will operation division return me with double?*/
 CREATE VIEW booking_price AS
-    SELECT travelerId, listingID, startdate, price / numNights AS book_price
+    SELECT travelerId, listingID, startdate, price::float / numNights AS book_price
     FROM Booking;
 
 /*find the average price per night per listing*/
