@@ -47,7 +47,7 @@ CREATE VIEW possible_result AS
 /*filter out those unqualified*/
 CREATE VIEW qualify AS
     SELECT travelerId
-    FROM Booking
+    FROM good_bargain
     GROUP BY travelerId
     HAVING count(*) >= 3; 	
 
@@ -57,7 +57,7 @@ CREATE VIEW result AS
 		largestBargainPercentage,
 		listingID
 	FROM possible_result
-	WHERE travelerId exists(SELECT qualify.travelerId FROM qualify);	
+	WHERE travelerId in(SELECT qualify.travelerId FROM qualify);	
 
 /*return the final result*/
 SELECT *

@@ -21,18 +21,19 @@ CREATE VIEW all_traveler AS
 
 /*find reciprocal: rating exactly the same*/
 CREATE VIEW reciprocal AS
-    SELECT all_traveler.travelerId, count(recv_rate = give_rate) AS reciprocal_num
+    SELECT all_traveler.travelerId, count(recv_rate > 0 ) AS reciprocal_num
     FROM all_traveler LEFT OUTER JOIN rating_table
     ON all_traveler.travelerId = rating_table.travelerId
     GROUP BY all_traveler.travelerId;
 
 /*find scratching backs: rating differs by one*/
 /*need to consider corner case such as the rating cannot go beyond 5 or below 1 (might be trivial)*/
+
+
+ 
 CREATE VIEW scratch_backs AS
     SELECT all_traveler.travelerId, 
-	count(recv_rate = give_rate + 1 
-	    OR recv_rate = give_rate - 1 
-	    OR recv_rate = give_rate) AS scratch_backs_num
+	count(CASE WHEN abs(recv_rate - give_rate) <= 1 THEN 1 END) AS scratch_backs_num
     FROM all_traveler LEFT OUTER JOIN rating_table
     ON rating_table.travelerId = all_traveler.travelerId
     GROUP BY all_traveler.travelerId;
